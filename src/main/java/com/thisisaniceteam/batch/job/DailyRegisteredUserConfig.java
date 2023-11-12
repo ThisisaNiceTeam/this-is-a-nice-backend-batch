@@ -22,8 +22,8 @@ public class DailyRegisteredUserConfig {
     @Bean
     public Job getDailyRegisteredUserJob(JobRepository repository,
             @Qualifier("dailyRegisteredUserStep") Step aggregateStep,
-            @Qualifier("fileWriteStep") Step fileWriteStep) {
-        return new JobBuilder("dailyRegisteredUserStep", repository)
+            @Qualifier("registeredUserFileWriteStep") Step fileWriteStep) {
+        return new JobBuilder("dailyRegisteredUserJob", repository)
                 .start(aggregateStep)
                 .next(fileWriteStep)
                 .build();
@@ -44,7 +44,7 @@ public class DailyRegisteredUserConfig {
                 .build();
     }
 
-    @Bean("fileWriteStep")
+    @Bean("registeredUserFileWriteStep")
     @JobScope
     public Step fileWrite(JobRepository repository,
             PlatformTransactionManager transactionManager,
