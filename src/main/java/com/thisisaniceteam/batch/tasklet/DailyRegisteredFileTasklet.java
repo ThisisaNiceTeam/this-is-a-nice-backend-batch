@@ -12,6 +12,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+// Writer별로 따로 관리 하기 위해 별도 클래스 구성
 @StepScope
 @Component
 public class DailyRegisteredFileTasklet implements Tasklet {

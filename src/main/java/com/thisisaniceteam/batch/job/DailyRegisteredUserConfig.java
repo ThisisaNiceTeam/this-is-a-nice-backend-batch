@@ -1,6 +1,7 @@
 package com.thisisaniceteam.batch.job;
 
 import com.thisisaniceteam.batch.item.writer.CountItemWriter;
+import com.thisisaniceteam.batch.tasklet.DailyRegisteredFileTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -34,7 +35,7 @@ public class DailyRegisteredUserConfig {
     public Step getDailyRegisteredUserStep(
             JobRepository jobRepository,
             PlatformTransactionManager transactionManager,
-            ItemReader itemReader,
+            @Qualifier("dailyRegisteredUserReader") ItemReader itemReader,
             CountItemWriter itemWriter) {
 
         return new StepBuilder("dailyRegisteredUserStep", jobRepository)
@@ -48,9 +49,9 @@ public class DailyRegisteredUserConfig {
     @JobScope
     public Step fileWrite(JobRepository repository,
             PlatformTransactionManager transactionManager,
-            Tasklet tasklet) {
+            DailyRegisteredFileTasklet tasklet) {
 
-        return new StepBuilder("fileWriteStep", repository)
+        return new StepBuilder("registeredUserFileWriteStep", repository)
                 .tasklet(tasklet, transactionManager)
                 .build();
     }

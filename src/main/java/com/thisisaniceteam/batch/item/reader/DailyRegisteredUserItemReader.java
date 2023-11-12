@@ -21,7 +21,7 @@ public class DailyRegisteredUserItemReader {
 
     private final DataSource dataSource;
 
-    @Bean
+    @Bean("dailyRegisteredUserReader")
     @StepScope
     public JdbcPagingItemReader<User> jdbcPagingItemReader(
             @Value("#{jobParameters[date]}") String date
