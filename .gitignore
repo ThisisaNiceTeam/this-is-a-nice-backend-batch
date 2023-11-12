@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 *.yml
 *.properties
+*.csv
 
 ### STS ###
 .apt_generated
