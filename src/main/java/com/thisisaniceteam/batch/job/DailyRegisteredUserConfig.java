@@ -20,7 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class DailyRegisteredUserConfig {
 
-    @Bean
+    @Bean("dailyRegisteredUserJob")
     public Job getDailyRegisteredUserJob(JobRepository repository,
             @Qualifier("dailyRegisteredUserStep") Step aggregateStep,
             @Qualifier("registeredUserFileWriteStep") Step fileWriteStep) {
