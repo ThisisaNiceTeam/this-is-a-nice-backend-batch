@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 // Writer별로 따로 관리 하기 위해 별도 클래스 구성
 @StepScope
 @Component
-public class DailyRegisteredFileTasklet implements Tasklet {
+public class DailyTransmissionFileTasklet implements Tasklet {
 
     @Value("#{jobParameters[date]}")
     private String date;
@@ -25,7 +25,7 @@ public class DailyRegisteredFileTasklet implements Tasklet {
 
         Map<String, Object> context = chunkContext.getStepContext().getJobExecutionContext();
 
-        File file = new File("C:/projects/this-is-a-nice-backend-batch/src/main/resources/static/daily_registered_count.csv");
+        File file = new File("C:/projects/this-is-a-nice-backend-batch/src/main/resources/static/daily_transmission_count.csv");
         BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
 
         bw.write(date + "," + context.get("count"));

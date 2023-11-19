@@ -1,5 +1,6 @@
 package com.thisisaniceteam.batch.item.reader;
 
+import com.thisisaniceteam.batch.model.Chat;
 import com.thisisaniceteam.batch.model.User;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,39 +18,40 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 @RequiredArgsConstructor
 @Configuration
-public class DailyRegisteredUserItemReader {
+public class DailyTransmissionItemReader {
 
     private final DataSource dataSource;
 
-    @Bean("dailyRegisteredUserReader")
+    @Bean("dailyTransmissionReader")
     @StepScope
-    public JdbcPagingItemReader<User> jdbcPagingItemReader(
+    public JdbcPagingItemReader<Chat> jdbcPagingItemReader(
             @Value("#{jobParameters[date]}") String date
     ) throws Exception {
 
         Map<String, Object> params = new HashMap<>();
         params.put("date", date);
 
-        return new JdbcPagingItemReaderBuilder<User>()
-                .name("dailyRegisteredUserReader")
+        return new JdbcPagingItemReaderBuilder<Chat>()
+                .name("dailyTransmissionReader")
                 .dataSource(dataSource)
-                .queryProvider(createQueryProvider())
+                .queryProvider(createDailyTransmissionQueryProvider())
                 .parameterValues(params)
-                .rowMapper(new BeanPropertyRowMapper<>(User.class))
+                .rowMapper(new BeanPropertyRowMapper<>(Chat.class))
                 .build();
     }
 
     @Bean
-    public PagingQueryProvider createQueryProvider() throws Exception {
+    public PagingQueryProvider createDailyTransmissionQueryProvider() throws Exception {
 
         SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
 
         factoryBean.setSelectClause("SELECT *");
-        factoryBean.setFromClause("FROM user");
+        factoryBean.setFromClause("FROM chat");
         factoryBean.setWhereClause("WHERE DATE(created_at) = :date");
         factoryBean.setSortKey("id");
         factoryBean.setDataSource(dataSource);
 
         return factoryBean.getObject();
     }
+
 }
