@@ -1,6 +1,8 @@
 package com.thisisaniceteam.batch.job;
 
+import com.thisisaniceteam.batch.item.processor.DailyTransmissionItemProcessor;
 import com.thisisaniceteam.batch.item.writer.CountItemWriter;
+import com.thisisaniceteam.batch.tasklet.DailyTransmissionByTimeTasklet;
 import com.thisisaniceteam.batch.tasklet.DailyTransmissionFileTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -22,10 +24,12 @@ public class DailyTransmissionConfig {
     @Bean("dailyTransmissionJob")
     public Job getDailyTransmissionJob(JobRepository repository,
             @Qualifier("dailyTransmissionStep") Step aggregateStep,
-            @Qualifier("dailyTransmissionFileWriteStep") Step fileWriteStep) {
+            @Qualifier("dailyTransmissionFileWriteStep") Step fileWriteStep,
+            @Qualifier("countByTimeFileWriteStep") Step countByTimeFileWriteStep) {
         return new JobBuilder("dailyTransmissionJob", repository)
                 .start(aggregateStep)
                 .next(fileWriteStep)
+                .next(countByTimeFileWriteStep)
                 .build();
     }
 
@@ -35,11 +39,13 @@ public class DailyTransmissionConfig {
             JobRepository jobRepository,
             PlatformTransactionManager transactionManager,
             @Qualifier("dailyTransmissionReader") ItemReader itemReader,
+            DailyTransmissionItemProcessor itemProcessor,
             CountItemWriter itemWriter) {
 
         return new StepBuilder("dailyTransmissionStep", jobRepository)
                 .<String, String>chunk(10, transactionManager)
                 .reader(itemReader)
+                .processor(itemProcessor)
                 .writer(itemWriter)
                 .build();
     }
@@ -51,6 +57,17 @@ public class DailyTransmissionConfig {
             DailyTransmissionFileTasklet tasklet) {
 
         return new StepBuilder("dailyTransmissionFileWriteStep", repository)
+                .tasklet(tasklet, transactionManager)
+                .build();
+    }
+
+    @Bean("countByTimeFileWriteStep")
+    @JobScope
+    public Step countByTimeFileWriteStep(JobRepository repository,
+            PlatformTransactionManager transactionManager,
+            DailyTransmissionByTimeTasklet tasklet) {
+
+        return new StepBuilder("countByTimeFileWriteStep", repository)
                 .tasklet(tasklet, transactionManager)
                 .build();
     }
