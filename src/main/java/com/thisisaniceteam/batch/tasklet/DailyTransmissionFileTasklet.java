@@ -20,12 +20,15 @@ public class DailyTransmissionFileTasklet implements Tasklet {
     @Value("#{jobParameters[date]}")
     private String date;
 
+    @Value("${path.daily-transmission}")
+    private String path;
+
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 
         Map<String, Object> context = chunkContext.getStepContext().getJobExecutionContext();
 
-        File file = new File("C:/projects/this-is-a-nice-backend-batch/src/main/resources/static/daily_transmission_count.csv");
+        File file = new File(path);
         BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
 
         bw.write(date + "," + context.get("count"));
