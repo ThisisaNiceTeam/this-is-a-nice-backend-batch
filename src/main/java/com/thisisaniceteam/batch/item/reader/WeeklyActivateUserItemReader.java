@@ -45,10 +45,10 @@ public class WeeklyActivateUserItemReader {
         SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
 
         factoryBean.setSelectClause("SELECT id");
-        factoryBean.setFromClause("FROM user");
+        factoryBean.setFromClause("FROM user AS u");
         factoryBean.setWhereClause("WHERE EXISTS ( "
                 + "SELECT 1 "
-                + "FROM chat c "
+                + "FROM chat AS c "
                 + "WHERE u.id = c.sender "
                 + "AND DATE(c.created_at) BETWEEN :date "
                 + "AND (:date + INTERVAL 1 DAY - INTERVAL 1 SECOND) "
