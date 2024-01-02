@@ -26,13 +26,15 @@ public class BatchScheduler {
     @Qualifier("dailyTransmissionJob")
     private final Job dailyTransmissionJob;
 
+    @Qualifier("weeklyActiveUserJob")
+    private final Job weeklyActiveUserJob;
+
     // 매일 4시 실행
     @Scheduled(cron = "0 0 4 * * *")
     public void runDaily() throws Exception {
         // Job Parameter 설정
         Map<String, JobParameter<?>> parameter = new HashMap<>();
-        String dateString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
-        parameter.put("date", new JobParameter(dateString, String.class));
+        setDateParam(parameter);
         JobParameters parameters = new JobParameters(parameter);
 
         // Job 시행
@@ -40,15 +42,20 @@ public class BatchScheduler {
         jobLauncher.run(dailyTransmissionJob, parameters);
     }
 
-//    @Scheduled(cron = "0 0 4 * * *")
-//    public void runWeekly() throws Exception {
-//        // Job Parameter 설정
-//        Map<String, JobParameter<?>> parameter = new HashMap<>();
-//        String dateString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
-//        parameter.put("date", new JobParameter(dateString, String.class));
-//        JobParameters parameters = new JobParameters(parameter);
-//
-//        // Job 시행
-//        jobLauncher.run(dailyRegisteredUserJob, parameters);
-//    }
+    // 매주 일요일 5시 실행
+    @Scheduled(cron = "0 0 5 * * 0")
+    public void runWeekly() throws Exception {
+        // Job Parameter 설정
+        Map<String, JobParameter<?>> parameter = new HashMap<>();
+        setDateParam(parameter);
+        JobParameters parameters = new JobParameters(parameter);
+
+        // Job 시행
+        jobLauncher.run(weeklyActiveUserJob, parameters);
+    }
+
+    private void setDateParam(Map<String, JobParameter<?>> parameter) {
+        String dateString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
+        parameter.put("date", new JobParameter(dateString, String.class));
+    }
 }
