@@ -44,11 +44,17 @@ public class WeeklyActivateUserItemReader {
 
         SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
 
-//        factoryBean.setSelectClause("SELECT *");
-//        factoryBean.setFromClause("FROM user");
-//        factoryBean.setWhereClause("WHERE DATE(created_at) = :date");
-//        factoryBean.setSortKey("id");
-//        factoryBean.setDataSource(dataSource);
+        factoryBean.setSelectClause("SELECT id");
+        factoryBean.setFromClause("FROM user");
+        factoryBean.setWhereClause("WHERE EXISTS ( "
+                + "SELECT 1 "
+                + "FROM ssafychat.chat c "
+                + "WHERE u.id = c.sender "
+                + "AND DATE(c.created_at) BETWEEN :date "
+                + "AND (:date + INTERVAL 1 DAY - INTERVAL 1 SECOND) "
+                + ") ");
+        factoryBean.setSortKey("id");
+        factoryBean.setDataSource(dataSource);
 
         return factoryBean.getObject();
     }
