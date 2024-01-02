@@ -48,7 +48,7 @@ public class WeeklyActivateUserItemReader {
         factoryBean.setFromClause("FROM user");
         factoryBean.setWhereClause("WHERE EXISTS ( "
                 + "SELECT 1 "
-                + "FROM ssafychat.chat c "
+                + "FROM chat c "
                 + "WHERE u.id = c.sender "
                 + "AND DATE(c.created_at) BETWEEN :date "
                 + "AND (:date + INTERVAL 1 DAY - INTERVAL 1 SECOND) "
